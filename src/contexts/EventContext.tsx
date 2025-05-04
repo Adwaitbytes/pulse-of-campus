@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { EventType } from '@/components/EventCard';
 import { mockEvents } from '@/lib/mockData';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'react-router-dom';
 
 type EventContextType = {
   events: EventType[];
@@ -23,6 +24,7 @@ const EventContext = createContext<EventContextType | undefined>(undefined);
 
 export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { toast } = useToast();
+  const location = useLocation();
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -36,10 +38,33 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     // Simulate an API request
     setTimeout(() => {
-      setEvents(mockEvents);
+      // Get events from local storage or use mock data
+      const storedEvents = localStorage.getItem('pulseOfCampusEvents');
+      if (storedEvents) {
+        setEvents(JSON.parse(storedEvents));
+      } else {
+        setEvents(mockEvents);
+      }
       setLoading(false);
     }, 800);
   }, []);
+  
+  // Save events to local storage when they change
+  useEffect(() => {
+    if (events.length > 0) {
+      localStorage.setItem('pulseOfCampusEvents', JSON.stringify(events));
+    }
+  }, [events]);
+  
+  // Apply URL params for filtering if present
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const collegeParam = params.get('college');
+    
+    if (collegeParam) {
+      setSelectedCollege(collegeParam);
+    }
+  }, [location.search]);
   
   // Add new event
   const addEvent = (event: Omit<EventType, 'id'>) => {

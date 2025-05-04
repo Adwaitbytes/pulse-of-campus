@@ -18,7 +18,7 @@ const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
     );
   }
 
-  if (events.length === 0) {
+  if (!events || events.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <h3 className="text-xl font-medium mb-2">No events found</h3>
