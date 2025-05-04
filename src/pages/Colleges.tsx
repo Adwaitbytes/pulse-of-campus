@@ -2,7 +2,7 @@
 import React from 'react';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
-import { Calendar, Link as LinkIcon, MapPin, Users } from 'lucide-react';
+import { Calendar, Link as LinkIcon, MapPin, Users, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
