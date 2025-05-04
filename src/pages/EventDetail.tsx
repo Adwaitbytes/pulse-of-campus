@@ -5,7 +5,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { useEvents } from '@/contexts/EventContext';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MapPin, User, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, ArrowLeft, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const EventDetail = () => {
@@ -53,6 +53,12 @@ const EventDetail = () => {
         return 'bg-pulse-pink text-white';
       default:
         return 'bg-gray-200 text-gray-800';
+    }
+  };
+  
+  const handleRegisterClick = () => {
+    if (event.eventUrl) {
+      window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
     }
   };
   
@@ -132,8 +138,11 @@ const EventDetail = () => {
               </div>
               
               <div className="mt-6">
-                <Button className="w-full bg-gradient-to-r from-pulse-purple to-pulse-teal hover:opacity-95">
-                  Register for Event
+                <Button 
+                  className="w-full bg-gradient-to-r from-pulse-purple to-pulse-teal hover:opacity-95 flex items-center justify-center gap-2"
+                  onClick={handleRegisterClick}
+                >
+                  Register for Event <ExternalLink size={16} />
                 </Button>
               </div>
             </div>

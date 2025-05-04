@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import EventCard, { EventType } from './EventCard';
 
 interface EventsListProps {
@@ -8,6 +8,10 @@ interface EventsListProps {
 }
 
 const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
+  useEffect(() => {
+    console.log("EventsList rendered with events:", events.length);
+  }, [events]);
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -25,7 +25,7 @@ const EventContext = createContext<EventContextType | undefined>(undefined);
 export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { toast } = useToast();
   const location = useLocation();
-  const [events, setEvents] = useState<EventType[]>([]);
+  const [events, setEvents] = useState<EventType[]>(mockEvents);
   const [loading, setLoading] = useState(true);
   
   // Filter states
@@ -34,27 +34,44 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedCollege, setSelectedCollege] = useState('All Colleges');
   
-  // Initialize with mock data
+  // Initialize with mock data immediately but still show loading for UI consistency
   useEffect(() => {
-    // Simulate an API request
-    setTimeout(() => {
+    // Simulate an API request with very short delay
+    const timer = setTimeout(() => {
       // Get events from local storage or use mock data
       const storedEvents = localStorage.getItem('pulseOfCampusEvents');
       if (storedEvents) {
-        setEvents(JSON.parse(storedEvents));
+        try {
+          const parsedEvents = JSON.parse(storedEvents);
+          // Validate that the parsed data matches our expected format
+          if (Array.isArray(parsedEvents) && parsedEvents.length > 0 && parsedEvents[0].title) {
+            setEvents(parsedEvents);
+          } else {
+            console.log("Invalid stored events format, using mock data");
+            setEvents(mockEvents);
+            localStorage.setItem('pulseOfCampusEvents', JSON.stringify(mockEvents));
+          }
+        } catch (e) {
+          console.error("Error parsing stored events:", e);
+          setEvents(mockEvents);
+          localStorage.setItem('pulseOfCampusEvents', JSON.stringify(mockEvents));
+        }
       } else {
         setEvents(mockEvents);
+        localStorage.setItem('pulseOfCampusEvents', JSON.stringify(mockEvents));
       }
       setLoading(false);
-    }, 800);
+    }, 300);
+    
+    return () => clearTimeout(timer);
   }, []);
   
-  // Save events to local storage when they change
+  // Save events to local storage when they change (but skip during initial loading)
   useEffect(() => {
-    if (events.length > 0) {
+    if (!loading && events.length > 0) {
       localStorage.setItem('pulseOfCampusEvents', JSON.stringify(events));
     }
-  }, [events]);
+  }, [events, loading]);
   
   // Apply URL params for filtering if present
   useEffect(() => {
@@ -115,6 +132,8 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     return true;
   });
+  
+  console.log("EventContext filtered events:", filteredEvents.length);
   
   const value = {
     events,

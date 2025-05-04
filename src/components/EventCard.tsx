@@ -15,6 +15,7 @@ export interface EventType {
   college: string;
   type: 'hackathon' | 'tech-talk' | 'workshop' | 'social' | 'other';
   image?: string;
+  eventUrl?: string;
 }
 
 interface EventCardProps {
