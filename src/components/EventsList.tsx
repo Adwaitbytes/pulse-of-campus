@@ -39,13 +39,11 @@ const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
       </div>
     );
   }
-
-  console.log("Rendering events:", events.map(e => e.title));
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 z-10 relative">
       {events.map((event, index) => (
-        <div key={event.id} className="transform transition-all duration-300 hover:-translate-y-1">
+        <div key={event.id} className="transform transition-all duration-300 hover:-translate-y-1 z-10">
           <EventCard event={event} index={index} />
         </div>
       ))}

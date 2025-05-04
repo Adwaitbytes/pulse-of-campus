@@ -25,7 +25,7 @@ const EventContext = createContext<EventContextType | undefined>(undefined);
 export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { toast } = useToast();
   const location = useLocation();
-  const [events, setEvents] = useState<EventType[]>(mockEvents);
+  const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Filter states
@@ -34,36 +34,47 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedCollege, setSelectedCollege] = useState('All Colleges');
   
-  // Initialize with mock data immediately but still show loading for UI consistency
+  // Initialize with mock data with a reliable approach
   useEffect(() => {
-    // Simulate an API request with very short delay
-    const timer = setTimeout(() => {
-      // Get events from local storage or use mock data
-      const storedEvents = localStorage.getItem('pulseOfCampusEvents');
-      if (storedEvents) {
-        try {
-          const parsedEvents = JSON.parse(storedEvents);
-          // Validate that the parsed data matches our expected format
-          if (Array.isArray(parsedEvents) && parsedEvents.length > 0 && parsedEvents[0].title) {
-            setEvents(parsedEvents);
-          } else {
-            console.log("Invalid stored events format, using mock data");
+    const loadEvents = () => {
+      try {
+        console.log("Loading events...");
+        setLoading(true);
+        
+        // Get events from local storage or use mock data
+        const storedEvents = localStorage.getItem('pulseOfCampusEvents');
+        if (storedEvents) {
+          try {
+            const parsedEvents = JSON.parse(storedEvents);
+            // Validate that the parsed data matches our expected format
+            if (Array.isArray(parsedEvents) && parsedEvents.length > 0 && parsedEvents[0].title) {
+              console.log("Using stored events:", parsedEvents.length);
+              setEvents(parsedEvents);
+            } else {
+              console.log("Invalid stored events format, using mock data");
+              setEvents(mockEvents);
+              localStorage.setItem('pulseOfCampusEvents', JSON.stringify(mockEvents));
+            }
+          } catch (e) {
+            console.error("Error parsing stored events:", e);
             setEvents(mockEvents);
             localStorage.setItem('pulseOfCampusEvents', JSON.stringify(mockEvents));
           }
-        } catch (e) {
-          console.error("Error parsing stored events:", e);
+        } else {
+          console.log("No stored events, using mock data");
           setEvents(mockEvents);
           localStorage.setItem('pulseOfCampusEvents', JSON.stringify(mockEvents));
         }
-      } else {
-        setEvents(mockEvents);
-        localStorage.setItem('pulseOfCampusEvents', JSON.stringify(mockEvents));
+      } catch (error) {
+        console.error("Failed to load events:", error);
+        setEvents(mockEvents); // Fallback to mock data
+      } finally {
+        setLoading(false); 
       }
-      setLoading(false);
-    }, 300);
+    };
     
-    return () => clearTimeout(timer);
+    // Delay loading slightly to ensure components are mounted
+    setTimeout(loadEvents, 100);
   }, []);
   
   // Save events to local storage when they change (but skip during initial loading)

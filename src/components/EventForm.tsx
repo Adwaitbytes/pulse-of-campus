@@ -114,7 +114,7 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
                           )}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent align="start" className="w-auto p-0 bg-white">
+                      <PopoverContent align="start" className="w-auto p-0 bg-white z-50">
                         <Calendar
                           mode="single"
                           selected={field.value}
