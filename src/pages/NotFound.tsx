@@ -1,26 +1,32 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import AnimatedBackground from '@/components/AnimatedBackground';
+import Navbar from '@/components/Navbar';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
-      </div>
-    </div>
+    <AnimatedBackground>
+      <Navbar />
+      
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-center glass p-10 rounded-xl max-w-md">
+          <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-pulse-purple to-pulse-teal text-transparent bg-clip-text">404</h1>
+          <p className="text-xl mb-6">Oops! We couldn't find that page</p>
+          <p className="text-muted-foreground mb-8">
+            The page you're looking for doesn't exist or has been moved.
+          </p>
+          <Button asChild className="bg-gradient-to-r from-pulse-purple to-pulse-teal">
+            <Link to="/" className="flex items-center gap-2">
+              <ArrowLeft size={16} />
+              Back to Home
+            </Link>
+          </Button>
+        </div>
+      </main>
+    </AnimatedBackground>
   );
 };
 
