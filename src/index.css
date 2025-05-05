@@ -75,8 +75,9 @@
     transition-duration: 200ms;
   }
   
+  /* Modified: Removed group class from here and apply it directly in component */
   .event-card {
-    @apply transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 group;
+    @apply transition-all duration-500 hover:shadow-2xl hover:-translate-y-2;
   }
   
   .animate-in {

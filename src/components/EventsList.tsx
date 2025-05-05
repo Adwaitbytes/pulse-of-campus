@@ -55,7 +55,7 @@ const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
       {events.map((event, index) => (
         <motion.div 
           key={event.id} 
-          className="card-tilt shine"
+          className="card-tilt shine group event-card"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
