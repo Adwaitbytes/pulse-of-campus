@@ -41,7 +41,7 @@ export const mockEvents: EventType[] = [
   {
     id: '4',
     title: 'Chainlink Constellation Hackathon',
-    description: 'Join the Chainlink Constellation Hackathon to build and innovate with Web3's leading oracle network. Over $450K in prizes available for builders!',
+    description: 'Join the Chainlink Constellation Hackathon to build and innovate with Web3\'s leading oracle network. Over $450K in prizes available for builders!',
     date: '2024-07-05',
     time: '9:00 AM - 10:00 PM',
     location: 'Berlin, Germany',
