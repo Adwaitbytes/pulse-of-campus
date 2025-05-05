@@ -18,7 +18,7 @@ const EventDetail = () => {
     return (
       <AnimatedBackground>
         <Navbar />
-        <main className="container mx-auto px-4 py-16 min-h-screen flex flex-col items-center justify-center">
+        <main className="container mx-auto px-4 py-16 min-h-screen flex flex-col items-center justify-center bg-white">
           <h1 className="text-2xl font-bold mb-4">Event not found</h1>
           <p className="text-muted-foreground mb-6">The event you're looking for doesn't exist or has been removed.</p>
           <Button asChild>
@@ -56,17 +56,11 @@ const EventDetail = () => {
     }
   };
   
-  const handleRegisterClick = () => {
-    if (event.eventUrl) {
-      window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
-  
   return (
     <AnimatedBackground>
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8 min-h-screen">
+      <main className="container mx-auto px-4 py-8 min-h-screen bg-white bg-opacity-90">
         <div className="mb-6">
           <Button asChild variant="ghost" size="sm" className="mb-4">
             <Link to="/events" className="flex items-center gap-2">
@@ -90,17 +84,20 @@ const EventDetail = () => {
                 src={event.image || `/placeholder.svg`} 
                 alt={event.title} 
                 className="w-full h-64 object-cover object-center" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/placeholder.svg';
+                }}
               />
             </div>
             
-            <div className="glass rounded-xl p-6 mb-6">
+            <div className="glass rounded-xl p-6 mb-6 bg-white bg-opacity-90">
               <h2 className="text-xl font-semibold mb-4">About This Event</h2>
               <p className="text-foreground/90 whitespace-pre-line">{event.description}</p>
             </div>
           </div>
           
           <div className="lg:col-span-1">
-            <div className="glass rounded-xl p-6 mb-6 sticky top-20">
+            <div className="glass rounded-xl p-6 mb-6 sticky top-20 bg-white bg-opacity-90">
               <h2 className="text-xl font-semibold mb-4">Event Details</h2>
               
               <div className="space-y-4">
@@ -138,19 +135,28 @@ const EventDetail = () => {
               </div>
               
               <div className="mt-6">
-                <Button 
-                  className="w-full bg-gradient-to-r from-pulse-purple to-pulse-teal hover:opacity-95 flex items-center justify-center gap-2"
-                  onClick={handleRegisterClick}
-                >
-                  Register for Event <ExternalLink size={16} />
-                </Button>
+                {event.eventUrl ? (
+                  <Button 
+                    className="w-full bg-gradient-to-r from-pulse-purple to-pulse-teal hover:opacity-95 flex items-center justify-center gap-2"
+                    onClick={() => window.open(event.eventUrl, '_blank', 'noopener,noreferrer')}
+                  >
+                    Register for Event <ExternalLink size={16} />
+                  </Button>
+                ) : (
+                  <Button 
+                    className="w-full bg-gradient-to-r from-pulse-purple to-pulse-teal hover:opacity-95 flex items-center justify-center gap-2"
+                    disabled
+                  >
+                    Registration Unavailable
+                  </Button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </main>
       
-      <footer className="py-8 border-t">
+      <footer className="py-8 border-t bg-white">
         <div className="container mx-auto px-4 text-center text-sm text-foreground/70">
           © 2025 Pulse of Campus. All rights reserved.
         </div>

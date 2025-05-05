@@ -72,9 +72,6 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
   // External link handler
   const handleExternalLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.stopPropagation();
-    if (!event.eventUrl) {
-      e.preventDefault();
-    }
   };
 
   const imageToUse = imageError || !event.image ? getPlaceholderImage() : event.image;

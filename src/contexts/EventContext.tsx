@@ -69,12 +69,15 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error("Failed to load events:", error);
         setEvents(mockEvents); // Fallback to mock data
       } finally {
-        setLoading(false); 
+        // Slight delay to ensure rendering is complete
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
     
-    // Delay loading slightly to ensure components are mounted
-    setTimeout(loadEvents, 100);
+    // Load events immediately
+    loadEvents();
   }, []);
   
   // Save events to local storage when they change (but skip during initial loading)
