@@ -47,7 +47,7 @@ const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
   
   return (
     <motion.div 
-      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 relative z-10"
+      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 relative z-20"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

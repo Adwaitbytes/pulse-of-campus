@@ -65,8 +65,13 @@
   
   .card-glow::before {
     content: "";
-    @apply absolute -inset-0.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-400 opacity-0 blur transition duration-700 group-hover:opacity-70 group-hover:duration-200;
+    @apply absolute -inset-0.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-400 opacity-0 blur transition duration-700;
     z-index: -1;
+  }
+  
+  /* Fix: Separate the group-hover styles from @apply */
+  .group:hover .card-glow::before {
+    @apply opacity-70 duration-200;
   }
   
   .event-card {
