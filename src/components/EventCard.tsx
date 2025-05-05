@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, MapPin, User, ExternalLink } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, ExternalLink, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 export interface EventType {
   id: string;
@@ -27,15 +28,15 @@ interface EventCardProps {
 const getEventTypeColor = (type: string) => {
   switch (type) {
     case 'hackathon':
-      return 'bg-pulse-purple text-white';
+      return 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-none shadow-lg shadow-purple-500/20';
     case 'tech-talk':
-      return 'bg-pulse-teal text-white';
+      return 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-none shadow-lg shadow-blue-500/20';
     case 'workshop':
-      return 'bg-pulse-orange text-white';
+      return 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-none shadow-lg shadow-orange-500/20';
     case 'social':
-      return 'bg-pulse-pink text-white';
+      return 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-none shadow-lg shadow-pink-500/20';
     default:
-      return 'bg-gray-200 text-gray-800';
+      return 'bg-gradient-to-r from-slate-500 to-gray-600 text-white border-none shadow-lg shadow-gray-500/20';
   }
 };
 
@@ -49,6 +50,7 @@ const placeholderImages = [
 
 const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
   const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   
   // Convert date string to Date object
   const eventDate = new Date(event.date);
@@ -76,60 +78,104 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
   const imageToUse = imageError || !event.image ? getPlaceholderImage() : event.image;
 
+  // Determine if the event is upcoming
+  const isUpcoming = new Date(event.date) > new Date();
+
+  // Calculate days remaining for upcoming events
+  const daysRemaining = isUpcoming 
+    ? Math.ceil((new Date(event.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
+
   return (
     <Card 
-      className="event-card overflow-hidden h-full animate-in border-2 hover:border-pulse-purple/50 shadow-lg bg-white"
+      className="event-card overflow-hidden h-full border-0 shadow-xl bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-xl group relative"
       style={{ '--index': index } as React.CSSProperties}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative h-48 overflow-hidden bg-slate-100">
-        <div className={`absolute top-3 right-3 z-10`}>
-          <Badge className={`${getEventTypeColor(event.type)}`}>
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 rounded-3xl"
+      ></div>
+
+      <div className="relative h-56 overflow-hidden rounded-t-3xl bg-gray-900">
+        <div className={`absolute top-3 left-3 z-10`}>
+          <Badge className={`${getEventTypeColor(event.type)} px-3 py-1.5 text-sm font-medium`}>
             {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
           </Badge>
         </div>
-        <img 
-          src={imageToUse}
-          alt={event.title} 
-          onError={handleImageError}
-          className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-500" 
-          loading="eager"
-        />
-        <div className="absolute bottom-0 left-0 bg-gradient-to-t from-black/60 to-transparent w-full h-1/2"></div>
+        
+        {isUpcoming && (
+          <div className="absolute top-3 right-3 z-10">
+            <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-none shadow-lg shadow-orange-500/20 px-3 py-1.5">
+              {daysRemaining === 0 ? "Today!" : `${daysRemaining} day${daysRemaining > 1 ? 's' : ''} left`}
+            </Badge>
+          </div>
+        )}
+        
+        <motion.div
+          className="w-full h-full"
+          animate={{
+            scale: isHovered ? 1.1 : 1,
+          }}
+          transition={{ duration: 0.7 }}
+        >
+          <img 
+            src={imageToUse}
+            alt={event.title} 
+            onError={handleImageError}
+            className="w-full h-full object-cover object-center transition-transform duration-700" 
+            loading="eager"
+          />
+        </motion.div>
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
       </div>
 
-      <CardHeader className="pb-2 bg-white">
-        <Link to={`/event/${event.id}`}>
-          <h3 className="text-lg font-semibold line-clamp-2 hover:text-pulse-purple">{event.title}</h3>
+      <CardHeader className="pb-2 pt-5">
+        <Link to={`/event/${event.id}`} className="group">
+          <h3 className="text-xl font-bold line-clamp-2 group-hover:text-indigo-600 transition-colors">
+            {event.title}
+          </h3>
         </Link>
       </CardHeader>
 
-      <CardContent className="pb-2 bg-white z-10">
+      <CardContent className="pb-2 z-10">
         <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{event.description}</p>
         
-        <div className="flex items-center gap-2 text-xs text-foreground/70 mb-1">
-          <Calendar size={14} className="text-pulse-purple" />
-          <span>{formattedDate}</span>
-        </div>
-        
-        <div className="flex items-center gap-2 text-xs text-foreground/70 mb-1">
-          <Clock size={14} className="text-pulse-teal" />
-          <span>{event.time}</span>
-        </div>
-        
-        <div className="flex items-center gap-2 text-xs text-foreground/70 mb-1">
-          <MapPin size={14} className="text-pulse-pink" />
-          <span className="truncate">{event.location}</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm text-foreground/80">
+            <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+              <Calendar size={12} />
+            </div>
+            <span>{formattedDate}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-foreground/80">
+            <div className="w-5 h-5 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600">
+              <Clock size={12} />
+            </div>
+            <span>{event.time}</span>
+          </div>
+          
+          <div className="flex items-center gap-2 text-sm text-foreground/80">
+            <div className="w-5 h-5 rounded-full bg-fuchsia-100 flex items-center justify-center text-fuchsia-600">
+              <MapPin size={12} />
+            </div>
+            <span className="truncate">{event.location}</span>
+          </div>
         </div>
       </CardContent>
 
-      <CardFooter className="border-t pt-3 mt-auto flex justify-between items-center bg-white">
-        <div className="flex items-center gap-2 text-xs">
-          <User size={14} />
-          <span>Hosted by {event.college}</span>
+      <CardFooter className="border-t border-gray-100 pt-4 mt-auto flex justify-between items-center">
+        <div className="flex items-center gap-2 text-xs font-medium">
+          <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+            <User size={12} />
+          </div>
+          <span>{event.college}</span>
         </div>
         
         {event.eventUrl && (
-          <Button variant="outline" size="sm" className="text-xs z-10" asChild>
+          <Button className="btn-modern" size="sm" asChild>
             <a 
               href={event.eventUrl} 
               target="_blank" 
@@ -137,7 +183,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
               className="flex items-center gap-1"
               onClick={handleExternalLink}
             >
-              Visit <ExternalLink size={12} />
+              <span>Visit</span> <ExternalLink size={12} />
             </a>
           </Button>
         )}

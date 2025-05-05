@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import EventCard, { EventType } from './EventCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { motion } from 'framer-motion';
 
 interface EventsListProps {
   events: EventType[];
@@ -15,15 +16,19 @@ const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg overflow-hidden border shadow-md">
+          <div key={i} className="bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/40 shadow-xl h-[400px]">
             <Skeleton className="h-48 w-full" />
-            <div className="p-4">
-              <Skeleton className="h-6 w-3/4 mb-2" />
+            <div className="p-5">
+              <Skeleton className="h-7 w-3/4 mb-3" />
               <Skeleton className="h-4 w-full mb-2" />
               <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-2/3 mb-4" />
+              <div className="flex gap-2 mt-4">
+                <Skeleton className="h-6 w-16 rounded-full" />
+                <Skeleton className="h-6 w-16 rounded-full" />
+              </div>
             </div>
           </div>
         ))}
@@ -33,21 +38,36 @@ const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
 
   if (!events || events.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-lg border-2 border-dashed">
-        <h3 className="text-xl font-medium mb-2">No events found</h3>
-        <p className="text-muted-foreground">Try adjusting your filters or search terms</p>
+      <div className="flex flex-col items-center justify-center py-20 text-center glass rounded-3xl border-2 border-white/40">
+        <h3 className="text-2xl font-semibold mb-4">No events found</h3>
+        <p className="text-muted-foreground text-lg">Try adjusting your filters or search terms</p>
       </div>
     );
   }
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+    <motion.div 
+      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 relative z-10"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {events.map((event, index) => (
-        <div key={event.id} className="transform transition-all duration-300 hover:-translate-y-1">
+        <motion.div 
+          key={event.id} 
+          className="card-tilt shine"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.5, 
+            delay: index * 0.1,
+            ease: [0.43, 0.13, 0.23, 0.96] 
+          }}
+        >
           <EventCard event={event} index={index} />
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 };
 
