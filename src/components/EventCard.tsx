@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, User, ExternalLink, Star } from 'lucide-react';
@@ -74,12 +73,17 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
   // Handle card click to navigate to event details
   const handleCardClick = () => {
-    navigate(`/event/${event.id}`);
+    // If there's an external URL, open it directly instead of going to details page
+    if (event.eventUrl) {
+      window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(`/event/${event.id}`);
+    }
   };
 
-  // External link handler
+  // External link handler (if we want to keep a separate button)
   const handleExternalLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.stopPropagation(); // Prevent navigation to event details
+    e.stopPropagation(); // Prevent card click handler
   };
 
   const imageToUse = imageError || !event.image ? getPlaceholderImage() : event.image;
@@ -136,6 +140,24 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         </motion.div>
         
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        
+        {/* Add prominent event URL button on top of the image */}
+        {event.eventUrl && (
+          <div className="absolute bottom-4 left-0 right-0 z-10 flex justify-center">
+            <a 
+              href={event.eventUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-full font-medium flex items-center gap-2 hover:shadow-lg hover:scale-105 transition-all duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
+              }}
+            >
+              <span>Visit Event</span> <ExternalLink size={16} />
+            </a>
+          </div>
+        )}
       </div>
 
       <CardHeader className="pb-2 pt-5">
