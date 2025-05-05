@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,6 +41,7 @@ interface EventFormProps {
 
 const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
   const { toast } = useToast();
+  const [calendarOpen, setCalendarOpen] = React.useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -100,11 +100,12 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
                 <FormItem>
                   <FormLabel>Date</FormLabel>
                   <FormControl>
-                    <Popover>
+                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           variant={"outline"}
                           className="w-full justify-start text-left"
+                          onClick={() => setCalendarOpen(true)}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? (
@@ -118,10 +119,12 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={(date) => {
+                            field.onChange(date);
+                            // Keep calendar open until user explicitly closes it
+                          }}
                           initialFocus
                           disabled={(date) => date < new Date()}
-                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>

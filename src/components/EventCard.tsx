@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, User, ExternalLink, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -51,6 +51,7 @@ const placeholderImages = [
 const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
   
   // Convert date string to Date object
   const eventDate = new Date(event.date);
@@ -71,9 +72,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
     setImageError(true);
   };
 
+  // Handle card click to navigate to event details
+  const handleCardClick = () => {
+    navigate(`/event/${event.id}`);
+  };
+
   // External link handler
   const handleExternalLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent navigation to event details
   };
 
   const imageToUse = imageError || !event.image ? getPlaceholderImage() : event.image;
@@ -88,10 +94,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
   return (
     <Card 
-      className="event-card overflow-hidden h-full border-0 shadow-xl bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-xl group relative"
+      className="event-card overflow-hidden h-full border-0 shadow-xl bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-xl group relative cursor-pointer"
       style={{ '--index': index } as React.CSSProperties}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleCardClick}
     >
       <div 
         className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 rounded-3xl"
@@ -132,11 +139,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
       </div>
 
       <CardHeader className="pb-2 pt-5">
-        <Link to={`/event/${event.id}`} className="group">
-          <h3 className="text-xl font-bold line-clamp-2 group-hover:text-indigo-600 transition-colors">
-            {event.title}
-          </h3>
-        </Link>
+        <h3 className="text-xl font-bold line-clamp-2 group-hover:text-indigo-600 transition-colors">
+          {event.title}
+        </h3>
       </CardHeader>
 
       <CardContent className="pb-2 z-10">
@@ -175,7 +180,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         </div>
         
         {event.eventUrl && (
-          <Button className="btn-modern" size="sm" asChild>
+          <Button className="btn-modern" size="sm" asChild onClick={e => e.stopPropagation()}>
             <a 
               href={event.eventUrl} 
               target="_blank" 

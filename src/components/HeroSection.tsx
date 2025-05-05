@@ -142,7 +142,7 @@ const HeroSection = () => {
               
               <div className="absolute inset-0 glass rounded-3xl overflow-hidden border-2 border-white/60 shadow-2xl">
                 <img 
-                  src="public/lovable-uploads/82795221-d01d-4a9d-9463-2c53365706e9.png" 
+                  src="public/lovable-uploads/c57f8990-7c8b-4686-b307-77c34a79b9a3.png" 
                   alt="College Events" 
                   className="w-full h-full object-cover object-center"
                 />
