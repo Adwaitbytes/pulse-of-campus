@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, User, ExternalLink, Star } from 'lucide-react';
@@ -104,6 +105,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
     >
+      {/* Add a subtle overlay to indicate clickability */}
+      <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors duration-300 z-10"></div>
+      
       <div 
         className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 rounded-3xl"
       ></div>
@@ -143,7 +147,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         
         {/* Add prominent event URL button on top of the image */}
         {event.eventUrl && (
-          <div className="absolute bottom-4 left-0 right-0 z-10 flex justify-center">
+          <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center">
             <a 
               href={event.eventUrl} 
               target="_blank" 
@@ -201,17 +205,24 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
           <span>{event.college}</span>
         </div>
         
-        {event.eventUrl && (
-          <Button className="btn-modern" size="sm" asChild onClick={e => e.stopPropagation()}>
-            <a 
-              href={event.eventUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="flex items-center gap-1"
-              onClick={handleExternalLink}
-            >
-              <span>Visit</span> <ExternalLink size={12} />
-            </a>
+        {/* Always show a button to indicate clickability */}
+        {event.eventUrl ? (
+          <Button 
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:opacity-90 transition-all"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
+            }}
+          >
+            <span>Visit Event</span> <ExternalLink size={14} />
+          </Button>
+        ) : (
+          <Button 
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:opacity-90 transition-all"
+            size="sm"
+          >
+            <span>See Details</span> <ArrowRight size={14} />
           </Button>
         )}
       </CardFooter>
