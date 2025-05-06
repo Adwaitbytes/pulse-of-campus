@@ -20,7 +20,7 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b backdrop-blur-md bg-background/70">
+    <header className="sticky top-0 z-50 border-b bg-background/95">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 z-20">
@@ -63,18 +63,20 @@ const Navbar = () => {
                   <Menu size={20} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[250px] sm:w-[300px] z-50">
-                <nav className="flex flex-col gap-4 mt-8">
-                  {navLinks.map(link => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className={`text-base py-2 ${isActive(link.path)}`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                  <div className="mt-4 pt-4 border-t">
+              <SheetContent side="right" className="w-[250px] sm:w-[300px] p-0">
+                <nav className="flex flex-col gap-0 h-full">
+                  <div className="pt-16 px-6 pb-6 border-b">
+                    {navLinks.map(link => (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        className={`text-base py-3 block ${isActive(link.path)}`}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="px-6 py-4 mt-auto border-t">
                     <Link
                       to="/submit-event"
                       className="bg-gradient-to-r from-pulse-purple to-pulse-teal text-white px-4 py-2 rounded text-base hover:opacity-95 block text-center"

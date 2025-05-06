@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,9 +62,9 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto glass p-8 rounded-xl">
+    <div className="w-full max-w-2xl mx-auto bg-white/30 backdrop-blur-sm p-5 sm:p-8 rounded-xl shadow-lg border border-white/40">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="title"
@@ -92,7 +93,7 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
             )}
           />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField
               control={form.control}
               name="date"
@@ -121,7 +122,7 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
                           selected={field.value}
                           onSelect={(date) => {
                             field.onChange(date);
-                            // Keep calendar open until user explicitly closes it
+                            setCalendarOpen(false);
                           }}
                           initialFocus
                           disabled={(date) => date < new Date()}
@@ -163,7 +164,7 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit, isSubmitting }) => {
             )}
           />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField
               control={form.control}
               name="college"
