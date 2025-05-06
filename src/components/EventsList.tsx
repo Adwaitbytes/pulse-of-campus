@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import EventCard, { EventType } from './EventCard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { motion } from 'framer-motion';
 
 interface EventsListProps {
   events: EventType[];
@@ -46,28 +45,13 @@ const EventsList: React.FC<EventsListProps> = ({ events, loading }) => {
   }
   
   return (
-    <motion.div 
-      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 relative z-20"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 relative z-20">
       {events.map((event, index) => (
-        <motion.div 
-          key={event.id} 
-          className="card-tilt shine group event-card"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ 
-            duration: 0.5, 
-            delay: index * 0.1,
-            ease: [0.43, 0.13, 0.23, 0.96] 
-          }}
-        >
+        <div key={event.id} className="card-container">
           <EventCard event={event} index={index} />
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 

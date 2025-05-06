@@ -5,7 +5,6 @@ import { Calendar, Clock, MapPin, User, ExternalLink, ArrowRight } from 'lucide-
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
 
 export interface EventType {
   id: string;
@@ -50,7 +49,6 @@ const placeholderImages = [
 
 const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
   const [imageError, setImageError] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   
   // Convert date string to Date object
@@ -72,29 +70,19 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
     setImageError(true);
   };
 
-  // Handle card click to navigate to event details
-  const handleCardClick = () => {
-    // If there's an external URL, open it directly instead of going to details page
-    if (event.eventUrl) {
-      window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      navigate(`/event/${event.id}`);
-    }
-  };
-
-  // External link handler (separate from card click)
+  // External link handler
   const handleExternalLink = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click handler
+    e.preventDefault();
+    e.stopPropagation();
     if (event.eventUrl) {
       window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      navigate(`/event/${event.id}`);
     }
   };
 
   // Details button handler
   const handleDetailsClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click handler
+    e.preventDefault();
+    e.stopPropagation();
     navigate(`/event/${event.id}`);
   };
 
@@ -109,21 +97,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
     : 0;
 
   return (
-    <Card 
-      className="event-card overflow-hidden h-full border-0 shadow-xl bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-xl group relative"
-      style={{ '--index': index } as React.CSSProperties}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Add a subtle overlay to indicate clickability */}
-      <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors duration-300 z-10"></div>
-      
-      <div 
-        className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 rounded-3xl"
-      ></div>
-
+    <Card className="event-card overflow-hidden h-full border-0 shadow-xl bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-xl">
       <div className="relative h-56 overflow-hidden rounded-t-3xl bg-gray-900">
-        <div className={`absolute top-3 left-3 z-10`}>
+        <div className="absolute top-3 left-3 z-10">
           <Badge className={`${getEventTypeColor(event.type)} px-3 py-1.5 text-sm font-medium`}>
             {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
           </Badge>
@@ -137,31 +113,20 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
           </div>
         )}
         
-        <motion.div
-          className="w-full h-full"
-          animate={{
-            scale: isHovered ? 1.1 : 1,
-          }}
-          transition={{ duration: 0.7 }}
-        >
-          <img 
-            src={imageToUse}
-            alt={event.title} 
-            onError={handleImageError}
-            className="w-full h-full object-cover object-center transition-transform duration-700" 
-            loading="eager"
-            onClick={handleCardClick}
-            style={{cursor: 'pointer'}}
-          />
-        </motion.div>
+        <img 
+          src={imageToUse}
+          alt={event.title} 
+          onError={handleImageError}
+          className="w-full h-full object-cover object-center" 
+          loading="eager"
+        />
         
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
         
-        {/* Add prominent event URL button on top of the image */}
         {event.eventUrl && (
           <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center">
             <Button 
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-full font-medium flex items-center gap-2 hover:shadow-lg hover:scale-105 transition-all duration-300"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-full font-medium flex items-center gap-2 hover:shadow-lg"
               onClick={handleExternalLink}
             >
               <span>Visit Event</span> <ExternalLink size={16} />
@@ -170,13 +135,13 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         )}
       </div>
 
-      <CardHeader className="pb-2 pt-5" onClick={handleCardClick} style={{cursor: 'pointer'}}>
-        <h3 className="text-xl font-bold line-clamp-2 group-hover:text-indigo-600 transition-colors">
+      <CardHeader className="pb-2 pt-5">
+        <h3 className="text-xl font-bold line-clamp-2">
           {event.title}
         </h3>
       </CardHeader>
 
-      <CardContent className="pb-2 z-10" onClick={handleCardClick} style={{cursor: 'pointer'}}>
+      <CardContent className="pb-2 z-10">
         <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{event.description}</p>
         
         <div className="space-y-2">
@@ -214,19 +179,19 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         {/* Always show a button for clear action */}
         {event.eventUrl ? (
           <Button 
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:opacity-90 transition-all"
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:opacity-90"
             size="sm"
             onClick={handleExternalLink}
           >
-            <span>Visit Event</span> <ExternalLink size={14} />
+            Visit Event <ExternalLink size={14} className="ml-1" />
           </Button>
         ) : (
           <Button 
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:opacity-90 transition-all"
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:opacity-90"
             size="sm"
             onClick={handleDetailsClick}
           >
-            <span>See Details</span> <ArrowRight size={14} />
+            See Details <ArrowRight size={14} className="ml-1" />
           </Button>
         )}
       </CardFooter>
