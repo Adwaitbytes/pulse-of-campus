@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, User, ExternalLink, ArrowRight } from 'lucide-react';
@@ -81,9 +82,20 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
     }
   };
 
-  // External link handler (if we want to keep a separate button)
-  const handleExternalLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  // External link handler (separate from card click)
+  const handleExternalLink = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click handler
+    if (event.eventUrl) {
+      window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(`/event/${event.id}`);
+    }
+  };
+
+  // Details button handler
+  const handleDetailsClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click handler
+    navigate(`/event/${event.id}`);
   };
 
   const imageToUse = imageError || !event.image ? getPlaceholderImage() : event.image;
@@ -98,11 +110,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
 
   return (
     <Card 
-      className="event-card overflow-hidden h-full border-0 shadow-xl bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-xl group relative cursor-pointer"
+      className="event-card overflow-hidden h-full border-0 shadow-xl bg-gradient-to-b from-white/80 to-white/60 backdrop-blur-xl group relative"
       style={{ '--index': index } as React.CSSProperties}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={handleCardClick}
     >
       {/* Add a subtle overlay to indicate clickability */}
       <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors duration-300 z-10"></div>
@@ -139,6 +150,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
             onError={handleImageError}
             className="w-full h-full object-cover object-center transition-transform duration-700" 
             loading="eager"
+            onClick={handleCardClick}
+            style={{cursor: 'pointer'}}
           />
         </motion.div>
         
@@ -147,29 +160,23 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
         {/* Add prominent event URL button on top of the image */}
         {event.eventUrl && (
           <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center">
-            <a 
-              href={event.eventUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <Button 
               className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-full font-medium flex items-center gap-2 hover:shadow-lg hover:scale-105 transition-all duration-300"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
-              }}
+              onClick={handleExternalLink}
             >
               <span>Visit Event</span> <ExternalLink size={16} />
-            </a>
+            </Button>
           </div>
         )}
       </div>
 
-      <CardHeader className="pb-2 pt-5">
+      <CardHeader className="pb-2 pt-5" onClick={handleCardClick} style={{cursor: 'pointer'}}>
         <h3 className="text-xl font-bold line-clamp-2 group-hover:text-indigo-600 transition-colors">
           {event.title}
         </h3>
       </CardHeader>
 
-      <CardContent className="pb-2 z-10">
+      <CardContent className="pb-2 z-10" onClick={handleCardClick} style={{cursor: 'pointer'}}>
         <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{event.description}</p>
         
         <div className="space-y-2">
@@ -204,15 +211,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
           <span>{event.college}</span>
         </div>
         
-        {/* Always show a button to indicate clickability */}
+        {/* Always show a button for clear action */}
         {event.eventUrl ? (
           <Button 
             className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:opacity-90 transition-all"
             size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.open(event.eventUrl, '_blank', 'noopener,noreferrer');
-            }}
+            onClick={handleExternalLink}
           >
             <span>Visit Event</span> <ExternalLink size={14} />
           </Button>
@@ -220,6 +224,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, index }) => {
           <Button 
             className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg hover:opacity-90 transition-all"
             size="sm"
+            onClick={handleDetailsClick}
           >
             <span>See Details</span> <ArrowRight size={14} />
           </Button>
